@@ -48,17 +48,39 @@ def setPWM(duty_cycle):
 
     #set the pwm object with the pin
     pwm = PWM(pwm_pin)
-    #set the pwm base frequency (a higher frequency so raise the accuracy of the measure of the analog signal)
-    pwm.freq(120000000)
+    #set the pwm base frequency (a lower frequency will help to have more counts of high and lows and thus more accuracy)
+    pwm.freq(1000)
     #set the pwm duty cycle
     pwm.duty_u16(duty_cycle)
+
+    #give a big enough time sample for the other program to accurately calculate the duty cycle
+    time.sleep(1)
+
+    #stop transmitting the signal
+    pwm.deinit()
+
+    # give some time so that the other code is ready to receive the duty cycle value
+    time.sleep_ms(10000)
 
     #return the pwm object to be activated later
     return pwm
 
+#This function will send the inital value of the duty cycle to the other pico so that it can also compare the values
+def send_duty_cycle(duty_cycle):
+    #(int)->None
+
+    #set UART
+    uart = UART(0, 9600, tx=9)
+
+    #turn the duty cycle into a sendable binary variable
+    duty_cycle_b = duty_cycle.encode('utf-8')
+
+    #send the duty cycle value
+    uart.write(duty_cycle_b)
+
 #this function will receive the measured ananlog signal and return the value of the duty cycle (% and 0-65535)
 def get_measured_signal():
-    #()->int, int
+    #()->int
 
     #set needed ariables
     measured_duty_cycle_bin = None
@@ -76,7 +98,8 @@ def get_measured_signal():
             measured_duty_cycle_bin = uart.read()
             #check if there is data, if the previous if passed through then the value shouldn't be None
             if measured_duty_cycle_bin != None:
-                measured_duty_cycle = int(measured_duty_cycle_bin.decode('utf=8'))    ;'''should be out of 65535'''
+                #turn the binary value into an int value
+                measured_duty_cycle = int(measured_duty_cycle_bin.decode('utf-8'))    ;'''should be out of 65535'''
             else:
                 #this never should happen but it would mean that the value received is None
                 print("there seems to be an error in the signal because the value of the received signal is None")
@@ -90,7 +113,7 @@ def get_measured_signal():
 
 #This function measures the difference between the duty cycle used and the one measured by the other pico
 def measure_difference(measured_duty_cycle, duty_cycle):
-    #(float, float)->float
+    #(int, int)->int
 
     #get the value of the difference
     difference = abs(measured_duty_cycle-duty_cycle)
@@ -99,7 +122,7 @@ def measure_difference(measured_duty_cycle, duty_cycle):
     return difference
 
 def display_difference(difference, duty_cycle, measured_duty_cycle):
-    #(float, int, int)->None
+    #(int, int, int)->None
 
     #calculate duty cycles in % (p stands for percentage)
     measured_duty_cycle_p = (measured_duty_cycle / 65535) * 100
@@ -110,3 +133,10 @@ def display_difference(difference, duty_cycle, measured_duty_cycle):
     print("The measure of the initial duty cycle; " + str(duty_cycle_p) + "% or " + str(measured_duty_cycle) + "/65535")
     print("The measure of the measured duty cycle; " + str(measured_duty_cycle_p) + "% or " + str(measured_duty_cycle) + "/65535")
     print("The difference between both is: " + str(difference_p) + "% or " + str(difference) + "/65535" )
+
+duty_cycle = get_input()
+pwm = setPWM(duty_cycle)
+send_duty_cycle(duty_cycle)
+measured_duty_cycle = get_measured_signal()
+difference = measure_difference(measure_difference, duty_cycle)
+display_difference(difference, duty_cycle, measured_duty_cycle) 
