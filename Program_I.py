@@ -5,7 +5,7 @@ it to the initial value of the PWM signal and display the value of the differenc
 
 Author: Nathan Savard
 For the SED 1115 class
-october ___ 2023'''
+october 31 2023'''
 
 from machine import PWM, Pin, UART
 import time
