@@ -3,6 +3,7 @@ import time
 import machine
 
 def calculate_duty_cycle(input_pin):
+    input_pin = 3
     # Initialize variables for highs and lows of the duty cycle
     highs = 0
     lows = 0
@@ -15,22 +16,25 @@ def calculate_duty_cycle(input_pin):
     while not pin.value():
         time.sleep_ms(1)
 
+
     # Start receiving data (placeholder for when second pico posts up)
     receiving_data = True
-
+    cap = 0
     while receiving_data:
         #Stops recieving the data once there have been 1000 lows
-        if lows >= 1000:
+        if cap >= 1000:
             lows -= 1000 ##makes sure that the second after the cycle stops there aren't any leftoever lows
             receiving_data = False
         if pin.value() == 0:  ##value is a function which will get the boolean value of a pin, either 1 or 0. In this 0 represents...
             ##...a low signal, and therefore the program adds 1 to the low count. Chat gpt was used to find this function and decide that it was...
             ##...the best fit for this scenario.
             lows += 1
+            cap += 1
             time.sleep_ms(1)
         else:  ## If the pin value isn't zero that means it must be 1, and therefore the program adds one to the high counter. Additionally...
             ##... both the above if statement and this else statement have timesleep functions which,
             highs += 1
+            cap = 0
             time.sleep_ms(1)
 
     if highs == 0:
