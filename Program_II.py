@@ -1,7 +1,8 @@
 import time
 
 import machine
-
+duty_cycle = 0
+received_number = 0
 def calculate_duty_cycle(input_pin):
     input_pin = 2
     # Initialize variables for highs and lows of the duty cycle
@@ -46,47 +47,36 @@ def calculate_duty_cycle(input_pin):
     duty_cycle = int((highs / (highs + lows)) * 65535)
     return duty_cycle
 
-    time.sleep(0.01)
-    #puts some time inbetween the functions as to keep them accurate
-
-def receive_initial_duty_cycle(uart_port):
-    # Initialize variables
-    data_buffer = b''  # A byte buffer to store received data
-
-    # Initialize the UART
-    uart = machine.UART(uart_port, baudrate=9600)  # Replace baudrate with the appropriate value
-
-    # Wait for the start of the signal (assuming start signal is high)
-    while uart.read(1) != b'\xFF':
-        pass
-
-    # Start receiving data
-    receiving_data = True
-
-    while receiving_data:
-        data = uart.read(1)
-
-        if data == b'\xFF':
-            receiving_data = False
-        else:
-            data_buffer += data
-
-    # Convert received data to an integer (16-bit value)
-    initial_duty_cycle = int.from_bytes(data_buffer, 'big')
-
-    return initial_duty_cycle
+time.sleep(0.01)
+#puts some time inbetween the functions as to keep them accurate
 
 
 
-def send_duty_cycle(uart_port, duty_cycle):
-    # Initialize the UART
-    uart = machine.UART(uart_port, baudrate=9600)  # Replace baudrate with the appropriate value
+# Initialize UART with the appropriate parameters
+uart_port = 2  # Replace with the actual UART port number you are using
+baudrate = 9600  #sets the transfer rate
 
-    # Send a start signal (e.g., '\xFF') to indicate the beginning of data
-    uart.write(b'\xFF')
+uart = machine.UART(uart_port, baudrate=baudrate)
 
-    # Send the duty cycle as a 16-bit value
-    duty_cycle_bytes = duty_cycle.to_bytes(2, 'big')
-    uart.write(duty_cycle_bytes)
+received_data = uart.read(2)  # Read 2 bytes since we are assuming a 16-bit number
+
+if received_data is not None and len(received_data) == 2: ##as we are reading 2 bytes each, this makes sure that data is recieved, and that it is 2 bytes
+    received_number = int.from_bytes(received_data, 'big')  # Convert received bytes back to an integer
+    print("Received inital duty cycle that the user inputed:", received_number)
+else:
+    print("Number was not recieved corretly")
+
+int1 = duty_cycle  # Replace with your first integer
+int2 = received_number  # Replace with your second integer
+
+int1_bytes = int1.to_bytes(2, 'big')  # Assuming 2-byte integers in big-endian format
+int2_bytes = int2.to_bytes(2, 'big')
+
+uart.write(int1_bytes)
+uart.write(int2_bytes)
+
+
+
+
 
 
