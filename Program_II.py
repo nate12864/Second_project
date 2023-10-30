@@ -3,7 +3,7 @@ import time
 import machine
 
 def calculate_duty_cycle(input_pin):
-    input_pin = 3
+    input_pin = 2
     # Initialize variables for highs and lows of the duty cycle
     highs = 0
     lows = 0
@@ -25,6 +25,7 @@ def calculate_duty_cycle(input_pin):
         if cap >= 1000:
             lows -= 1000 ##makes sure that the second after the cycle stops there aren't any leftoever lows
             receiving_data = False
+            continue
         if pin.value() == 0:  ##value is a function which will get the boolean value of a pin, either 1 or 0. In this 0 represents...
             ##...a low signal, and therefore the program adds 1 to the low count. Chat gpt was used to find this function and decide that it was...
             ##...the best fit for this scenario.
@@ -44,8 +45,8 @@ def calculate_duty_cycle(input_pin):
     duty_cycle = int((highs / (highs + lows)) * 65535)
     return duty_cycle
 
-time.sleep(10)
-##puts some time inbetween the functions as to keep them accurate
+    time.sleep(0.01)
+    #puts some time inbetween the functions as to keep them accurate
 
 def receive_initial_duty_cycle(uart_port):
     # Initialize variables
