@@ -17,6 +17,7 @@ def calculate_duty_cycle(input_pin):
         time.sleep_ms(1)
 
 
+
     # Start receiving data (placeholder for when second pico posts up)
     receiving_data = True
     cap = 0
