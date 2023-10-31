@@ -14,7 +14,6 @@ import sys
 #This function gets the value of the duty cycle from the user and makes it usable in a PWM object
 def get_input():
     #()->float
-
     #set needed variables
     #flag used for the while loop
     noproperinput = True
@@ -39,13 +38,13 @@ def get_input():
     #return the value of the duty_cycle that will be used for the PWM object
     return duty_cycle 
 
-def setPWM(duty_cycle):
-    #(int)->machine.PWM
+def send_PWM(duty_cycle):
+    #(int)->None
 
     #set pin used for the PWM
-    pwm_pin = Pin(2)  #pin chosen (pin number 3 will have the same freqency if used) 
+    pwm_pin = Pin("GPIO2")  #pin chosen (pin number 3 will have the same freqency if used) 
     '''use the same in program II for simplicity'''
-
+    
     #set the pwm object with the pin
     pwm = PWM(pwm_pin)
     #set the pwm base frequency (a lower frequency will help to have more counts of high and lows and thus more accuracy)
@@ -54,23 +53,20 @@ def setPWM(duty_cycle):
     pwm.duty_u16(duty_cycle)
 
     #give a big enough time sample for the other program to accurately calculate the duty cycle
-    time.sleep(1)
+    time.sleep(2)
 
     #stop transmitting the signal
     pwm.deinit()
 
-    # give some time so that the other code is ready to receive the duty cycle value
-    time.sleep_ms(10000)
-
-    #return the pwm object to be activated later
-    return pwm
+    # give some time so that the other code is ready to receive the duty cycle value (user input)
+    time.sleep_ms(5)
 
 #This function will send the inital value of the duty cycle to the other pico so that it can also compare the values
 def send_duty_cycle(duty_cycle):
     #(int)->None
 
     #set UART
-    uart = UART(0, 9600, tx=9)
+    uart = UART(0, 9600, tx=Pin("GPIO9"))
 
     #turn the duty cycle into a sendable binary variable
     duty_cycle_b = duty_cycle.encode('utf-8')
@@ -83,30 +79,22 @@ def get_measured_signal():
     #()->int
 
     #set needed ariables
-    measured_duty_cycle_bin = None
+    data_bytes = False
     measured_duty_cycle = 0
 
     #set the pin that will receive the signal
-    uart = UART(0, 9600, rx=Pin(8)) ;'''tx in the other program should be Pin(8)'''
+    uart = UART(0, 9600, rx=Pin("GPIO9"))
     #set the flag for the while loop
     nothing_received = True
-    #receive the signal
+    #wait for the data and assign it to data_bytes
     while nothing_received:
-        #if data is being transmitted
-        if uart.any():
-            #get the data
-            measured_duty_cycle_bin = uart.read()
-            #check if there is data, if the previous if passed through then the value shouldn't be None
-            if measured_duty_cycle_bin != None:
-                #turn the binary value into an int value
-                measured_duty_cycle = int(measured_duty_cycle_bin.decode('utf-8'))    ;'''should be out of 65535'''
-            else:
-                #this never should happen but it would mean that the value received is None
-                print("there seems to be an error in the signal because the value of the received signal is None")
-                #exit the program to adjust input or connections of the hardware
-                sys.exit()
-            #end the loop
+        data_bytes = uart.read()
+        if data_bytes != None or data_bytes != False:
             nothing_received = False
+    #make sure the data_bytes is in bytes
+    data_bytes = bytes(data_bytes)
+    #turn the bytes values in a numeric value that can be used
+    measured_duty_cycle = data_bytes.decode('utf-8')
     
     #return the measured value of the PWM signal
     return measured_duty_cycle
@@ -135,7 +123,7 @@ def display_difference(difference, duty_cycle, measured_duty_cycle):
     print("The difference between both is: " + str(difference_p) + "% or " + str(difference) + "/65535" )
 
 duty_cycle = get_input()
-pwm = setPWM(duty_cycle)
+send_PWM(duty_cycle)
 send_duty_cycle(duty_cycle)
 measured_duty_cycle = get_measured_signal()
 difference = measure_difference(measure_difference, duty_cycle)
