@@ -78,3 +78,38 @@ def send_duty_cycle(duty_cycle):
 pwm_duty_cycle = calculate_duty_cycle()
 user_duty_cycle = receive_initial_duty_cycle()
 send_duty_cycle(pwm_duty_cycle)
+
+def tot():
+    Total = pwm_duty_cycle - int(user_duty_cycle)
+    return Total
+
+
+pwm_duty_cycle = calculate_duty_cycle()
+user_duty_cycle = receive_initial_duty_cycle()
+send_duty_cycle(pwm_duty_cycle)
+
+go = True
+while go == True:
+    step1 = input("Hello, would you like to recieve and calculate the duty cycle from PICO 1? Y/N")
+    if step1.lower() == 'y':
+        calculate_duty_cycle()
+        time.sleep (1)
+        print ("Here is the duty cycle calculated:" + str(pwm_duty_cycle))
+        step2 = input("Next, would you like to read and measure the difference between the current duty cycel and the intial duty cycle inputed into the first program? Y/N")
+        if step2.lower() == 'y':
+            if user_duty_cycle is not None:
+                print("Received initial duty cycle:", user_duty_cycle)
+            else:
+                print("Failed to receive initial duty cycle.")
+                break
+            #Total is the difference between original and measured duty cycles.
+            Total = tot()
+            print ("Calculated difference between intital, and measured:" + str(Total) )
+            time.sleep(1)
+            print ("The data will now be sent back to the original pico.")
+            send_duty_cycle(pwm_duty_cycle)
+            asker  = input ("Would you like to exit the program? Y/N")
+            if asker.lower() == 'y':
+                break
+            else:
+                continue
