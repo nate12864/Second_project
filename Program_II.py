@@ -13,7 +13,6 @@ def calculate_duty_cycle():
     while not pin.value():
         time.sleep(0.5)
 
-
     # Start receiving data (placeholder for when second pico posts up)
     receiving_data = True
     cap = 0
@@ -48,7 +47,7 @@ def receive_initial_duty_cycle():
     data_bytes = False
 
     # Initialize the UART
-    uart = machine.UART("GPIO9", baudrate=9600)  # Replace baudrate with the appropriate value
+    uart = machine.UART(0, baudrate=9600, rx=machine.Pin("GPIO9"))  # Replace baudrate with the appropriate value
 
     # Start receiving data
     not_recieving_data = True
@@ -66,20 +65,16 @@ def receive_initial_duty_cycle():
 
     return initial_duty_cycle
 
-
-
-
-def send_duty_cycle(uart_port, duty_cycle):
+def send_duty_cycle(duty_cycle):
     # Initialize the UART
-    uart = machine.UART(uart_port, baudrate=9600)  # Replace baudrate with the appropriate value
+    uart = machine.UART(0, baudrate=9600, tx=machine.Pin("GPIO9"))  # Replace baudrate with the appropriate value
 
-    # Send a start signal (e.g., '\xFF') to indicate the beginning of data
-    uart.write(b'\xFF')
-
-    # Send the duty cycle as a 16-bit value
-    duty_cycle_bytes = duty_cycle.to_bytes(2, 'big')
+    #transfer the calaculated duty cycle into a byte value that will be transmitted
+    duty_cycle_bytes = duty_cycle.encode("utf-8")
+    #send the duty cycle through the UART
     uart.write(duty_cycle_bytes)
 
 
 pwm_duty_cycle = calculate_duty_cycle()
 user_duty_cycle = receive_initial_duty_cycle()
+send_duty_cycle(pwm_duty_cycle)
