@@ -9,7 +9,6 @@ october 31 2023'''
 
 from machine import PWM, Pin, UART
 import time
-import sys
 
 #This function gets the value of the duty cycle from the user and makes it usable in a PWM object
 def get_input():
@@ -38,6 +37,7 @@ def get_input():
     #return the value of the duty_cycle that will be used for the PWM object
     return duty_cycle 
 
+#this function sends the duty cycle given by the user to the other pico using uart communications
 def send_PWM(duty_cycle):
     #(int)->None
 
@@ -109,6 +109,7 @@ def measure_difference(measured_duty_cycle, duty_cycle):
     #return the value of the difference
     return difference
 
+#this function displays all the results to the user
 def display_difference(difference, duty_cycle, measured_duty_cycle):
     #(int, int, int)->None
 

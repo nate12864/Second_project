@@ -74,14 +74,9 @@ def send_duty_cycle(duty_cycle):
     #send the duty cycle through the UART
     uart.write(duty_cycle_bytes)
 
-
-pwm_duty_cycle = calculate_duty_cycle()
-user_duty_cycle = receive_initial_duty_cycle()
-send_duty_cycle(pwm_duty_cycle)
-
-def tot():
-    Total = pwm_duty_cycle - int(user_duty_cycle)
-    return Total
+def calculate__difference():
+    difference = pwm_duty_cycle - int(user_duty_cycle)
+    return difference
 
 
 pwm_duty_cycle = calculate_duty_cycle()
