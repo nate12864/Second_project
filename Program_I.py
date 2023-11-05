@@ -94,7 +94,7 @@ def get_measured_signal():
     #make sure the data_bytes is in bytes
     data_bytes = bytes(data_bytes)
     #turn the bytes values in a numeric value that can be used
-    measured_duty_cycle = data_bytes.decode('utf-8')
+    measured_duty_cycle = int(data_bytes.decode('utf-8'))
     
     #return the measured value of the PWM signal
     return measured_duty_cycle
@@ -127,5 +127,5 @@ duty_cycle = get_input()
 send_PWM(duty_cycle)
 send_duty_cycle(duty_cycle)
 measured_duty_cycle = get_measured_signal()
-difference = measure_difference(measure_difference, duty_cycle)
+difference = measure_difference(measured_duty_cycle, duty_cycle)
 display_difference(difference, duty_cycle, measured_duty_cycle) 
