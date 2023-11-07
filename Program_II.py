@@ -12,6 +12,7 @@ def calculate_duty_cycle():
     pin = machine.Pin(machine.Pin(5), machine.Pin.IN)
 
     # Wait for a high signal to start receiving data
+    
     while not pin.value():
         time.sleep_us(0.5)
 

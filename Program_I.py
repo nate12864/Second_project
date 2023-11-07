@@ -48,18 +48,18 @@ def send_PWM(duty_cycle):
     #set the pwm object with the pin
     pwm = PWM(pwm_pin)
     #set the pwm base frequency (a lower frequency will help to have more counts of high and lows and thus more accuracy)
-    pwm.freq(1000)
+    pwm.freq(10)
     #set the pwm duty cycle
     pwm.duty_u16(duty_cycle)
 
     #give a big enough time sample for the other program to accurately calculate the duty cycle
-    time.sleep(2)
+   # time.sleep(2)
 
     #stop transmitting the signal
-    pwm.deinit()
+   # pwm.deinit()
 
     # give some time so that the other code is ready to receive the duty cycle value (user input)
-    time.sleep_ms(5)
+    #time.sleep_ms(5)
 
 #This function will send the inital value of the duty cycle to the other pico so that it can also compare the values
 def send_duty_cycle(duty_cycle):
