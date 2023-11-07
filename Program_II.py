@@ -70,7 +70,7 @@ def receive_initial_duty_cycle():
 #this function sends the duty cycle gotten from the pwm to the other pico
 def send_duty_cycle(duty_cycle):
     # Initialize the UART
-    uart = machine.UART(0, baudrate=9600, tx=machine.Pin("GPIO9"))  # Replace baudrate with the appropriate value
+    uart = machine.UART(0, baudrate=9600, tx=machine.Pin("GPIO8"))  # Replace baudrate with the appropriate value
 
     #transfer the calaculated duty cycle into a byte value that will be transmitted
     duty_cycle_bytes = duty_cycle.encode("utf-8")
@@ -92,7 +92,7 @@ def display_difference(difference, duty_cycle, measured_duty_cycle):
     difference_p = (difference / 65535) * 100
 
     #messages to the user
-    print("The measure of the initial duty cycle; " + str(duty_cycle_p) + "% or " + str(measured_duty_cycle) + "/65535")
+    print("The measure of the initial duty cycle; " + str(duty_cycle_p) + "% or " + str(duty_cycle) + "/65535")
     print("The measure of the measured duty cycle; " + str(measured_duty_cycle_p) + "% or " + str(measured_duty_cycle) + "/65535")
     print("The difference between both is: " + str(difference_p) + "% or " + str(difference) + "/65535" )
 
