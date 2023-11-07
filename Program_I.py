@@ -42,7 +42,7 @@ def send_PWM(duty_cycle):
     #(int)->None
 
     #set pin used for the PWM
-    pwm_pin = Pin("GPIO2")  #pin chosen (pin number 3 will have the same freqency if used) 
+    pwm_pin = Pin(2)  #pin chosen (pin number 3 will have the same freqency if used) 
     '''use the same in program II for simplicity'''
     
     #set the pwm object with the pin
@@ -66,10 +66,10 @@ def send_duty_cycle(duty_cycle):
     #(int)->None
 
     #set UART
-    uart = UART(0, 9600, tx=Pin("GPIO9"))
+    uart = UART(0, 9600, tx=Pin(0))
 
     #turn the duty cycle into a sendable binary variable
-    duty_cycle_b = duty_cycle.encode('utf-8')
+    duty_cycle_b = bytes(duty_cycle)
 
     #send the duty cycle value
     uart.write(duty_cycle_b)
@@ -83,7 +83,7 @@ def get_measured_signal():
     measured_duty_cycle = 0
 
     #set the pin that will receive the signal
-    uart = UART(0, 9600, rx=Pin("GPIO9"))
+    uart = UART(0, 9600, rx=Pin(1))
     #set the flag for the while loop
     nothing_received = True
     #wait for the data and assign it to data_bytes
