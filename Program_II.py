@@ -70,11 +70,7 @@ def receive_initial_duty_cycle():
 #this function sends the duty cycle gotten from the pwm to the other pico
 def send_duty_cycle(duty_cycle):
     # Initialize the UART
-<<<<<<< HEAD
-    uart = machine.UART(0, baudrate=9600, tx=machine.Pin("GPIO8"))  # Replace baudrate with the appropriate value
-=======
     uart = machine.UART(0, baudrate=9600, tx=machine.Pin(0))  # Replace baudrate with the appropriate value
->>>>>>> b345f491e2681a6075c4cdf2282e791130ecfed1
 
     #transfer the calaculated duty cycle into a byte value that will be transmitted
     duty_cycle_bytes = bytes(duty_cycle)
