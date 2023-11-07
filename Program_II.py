@@ -1,6 +1,7 @@
 import time
 import machine
 
+
 #this function gets the duty cycle from the pwm signal
 def calculate_duty_cycle():
     #()->int
@@ -8,7 +9,7 @@ def calculate_duty_cycle():
     highs = 0
     lows = 0
     # Configure the input pin
-    pin = machine.Pin(machine.Pin("GPIO2"), machine.Pin.IN)
+    pin = machine.Pin(machine.Pin(2), machine.Pin.IN)
 
     # Wait for a high signal to start receiving data
     while not pin.value():
@@ -44,12 +45,11 @@ def calculate_duty_cycle():
 
 #this function gets the intended value for the duty cycle
 def receive_initial_duty_cycle():
-    # Initialize variables
     #initialize the variable containing the binary form of the recieved duty cycle
     data_bytes = False
 
     # Initialize the UART
-    uart = machine.UART(0, baudrate=9600, rx=machine.Pin("GPIO9"))  # Replace baudrate with the appropriate value
+    uart = machine.UART(0, baudrate=9600, rx=machine.Pin(1))  
 
     # Start receiving data
     not_recieving_data = True
@@ -70,10 +70,10 @@ def receive_initial_duty_cycle():
 #this function sends the duty cycle gotten from the pwm to the other pico
 def send_duty_cycle(duty_cycle):
     # Initialize the UART
-    uart = machine.UART(0, baudrate=9600, tx=machine.Pin("GPIO9"))  # Replace baudrate with the appropriate value
+    uart = machine.UART(0, baudrate=9600, tx=machine.Pin(0))  # Replace baudrate with the appropriate value
 
     #transfer the calaculated duty cycle into a byte value that will be transmitted
-    duty_cycle_bytes = duty_cycle.encode("utf-8")
+    duty_cycle_bytes = bytes(duty_cycle)
     #send the duty cycle through the UART
     uart.write(duty_cycle_bytes)
 
@@ -92,7 +92,7 @@ def display_difference(difference, duty_cycle, measured_duty_cycle):
     difference_p = (difference / 65535) * 100
 
     #messages to the user
-    print("The measure of the initial duty cycle; " + str(duty_cycle_p) + "% or " + str(measured_duty_cycle) + "/65535")
+    print("The measure of the initial duty cycle; " + str(duty_cycle_p) + "% or " + str(duty_cycle) + "/65535")
     print("The measure of the measured duty cycle; " + str(measured_duty_cycle_p) + "% or " + str(measured_duty_cycle) + "/65535")
     print("The difference between both is: " + str(difference_p) + "% or " + str(difference) + "/65535" )
 
