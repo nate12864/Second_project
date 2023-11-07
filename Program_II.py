@@ -13,9 +13,9 @@ def calculate_duty_cycle():
 
     # Wait for a high signal to start receiving data
     while not pin.value():
-        time.sleep(0.5)
+        time.sleep_us(0.5)
 
-    # Start receiving data (placeholder for when second pico posts up)
+    # Start receiving data 
     receiving_data = True
     cap = 0
     while receiving_data:
@@ -23,7 +23,7 @@ def calculate_duty_cycle():
         if cap >= 1000:
             lows -= 1000 #makes sure that the second after the cycle stops there aren't any leftoever lows
             receiving_data = False
-            continue
+            
         if pin.value() == 0:  ##value is a function which will get the boolean value of a pin, either 1 or 0. In this 0 represents...
             #...a low signal, and therefore the program adds 1 to the low count. Chat gpt was used to find this function and decide that it was...
             #...the best fit for this scenario.
@@ -70,7 +70,7 @@ def receive_initial_duty_cycle():
 #this function sends the duty cycle gotten from the pwm to the other pico
 def send_duty_cycle(duty_cycle):
     # Initialize the UART
-    uart = machine.UART(0, baudrate=9600, tx=machine.Pin(0))  # Replace baudrate with the appropriate value
+    uart = machine.UART(0, baudrate=9600, tx=machine.Pin(0))  
 
     #transfer the calaculated duty cycle into a byte value that will be transmitted
     duty_cycle_bytes = bytes(duty_cycle)
