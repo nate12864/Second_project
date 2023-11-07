@@ -94,7 +94,7 @@ def get_measured_signal():
     #make sure the data_bytes is in bytes
     data_bytes = bytes(data_bytes)
     #turn the bytes values in a numeric value that can be used
-    measured_duty_cycle = int.from_bytes(data_bytes, byteorder='little')
+    measured_duty_cycle = int(data_bytes.decode('utf-8'))
     
     #return the measured value of the PWM signal
     return measured_duty_cycle

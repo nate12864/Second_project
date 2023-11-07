@@ -9,11 +9,11 @@ def calculate_duty_cycle():
     highs = 0
     lows = 0
     # Configure the input pin
-    pin = machine.Pin(machine.Pin(2), machine.Pin.IN)
+    pin = machine.Pin(machine.Pin(5), machine.Pin.IN)
 
     # Wait for a high signal to start receiving data
     while not pin.value():
-        time.sleep(0.5)
+        time.sleep_us(1)
 
     # Start receiving data (placeholder for when second pico posts up)
     receiving_data = True
